@@ -49,6 +49,7 @@ namespace updater
                         DownloadName = "Console",
                         MarketingName = "NCrunch Console"
                     },
+                    NCrunchProgram.CreateVsProgram(2019),
                     NCrunchProgram.CreateVsProgram(2017),
                     NCrunchProgram.CreateVsProgram(2015),
                     NCrunchProgram.CreateVsProgram(2013),
