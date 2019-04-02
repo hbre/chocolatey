@@ -16,6 +16,8 @@
     <summary>NCrunch is an automated concurrent testing tool for Visual Studio.  It intelligently runs automated tests so that you don't have to, and gives you a huge amount of useful information about your tested code, such as code coverage and performance metrics, inline in your IDE while you type.</summary>
     <description>What is this? https://www.ncrunch.net/documentation/guides_distributed-processing NCrunch is an automated concurrent testing tool for Visual Studio.  It intelligently runs automated tests so that you don't have to, and gives you a huge amount of useful information about your tested code, such as code coverage and performance metrics, inline in your IDE while you type.</description>
     <tags>ncrunch visualstudio ncrunch-vs2010 admin testing automation</tags>
+    <docsUrl>https://www.ncrunch.net/documentation/overview</docsUrl>
+    <bugTrackerUrl>https://forum.ncrunch.net</bugTrackerUrl>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />
