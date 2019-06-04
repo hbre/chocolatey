@@ -22,7 +22,7 @@ namespace updater.tests
                 "\n\t<iframe id=\"downloadFrame\" src=\"https://s3.amazonaws.com/downloads.ncrunch.net/NCrunch_Console_3.23.0.10.msi\"></iframe>\n";
 
             var url = Program.GetDownloadLink(downloadSite, "Console");
-            Assert.Equal("https://s3.amazonaws.com/downloads.ncrunch.net/NCrunch_Console_3.23.0.10.msi", url.ToString());
+            Assert.Equal("http://downloads.ncrunch.net/NCrunch_Console_3.23.0.10.msi", url.ToString());
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace updater.tests
         "<iframe id=\"downloadFrame\" src=\"https://s3.amazonaws.com/downloads.ncrunch.net/NCrunch_VS2012_3.23.0.10.msi\"></iframe>";
 
             var url = Program.GetDownloadLink(downloadSite, "VS2012");
-            Assert.Equal("https://s3.amazonaws.com/downloads.ncrunch.net/NCrunch_VS2012_3.23.0.10.msi", url.ToString());
+            Assert.Equal("http://downloads.ncrunch.net/NCrunch_VS2012_3.23.0.10.msi", url.ToString());
         }
 
         [Fact]
