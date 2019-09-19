@@ -1,8 +1,8 @@
 ﻿$ErrorActionPreference = 'Stop'
 
 $packageName='ncrunch-vs2013'
-$url32='http://downloads.ncrunch.net/NCrunch_VS2013_3.30.0.1.msi'
-$checksum32='F3FD83B9FA6CE37A5F9DBD087C9C40F0ECA2095E75A496218CB3543BDA1236BB'
+$url32='http://downloads.ncrunch.net/NCrunch_VS2013_3.31.0.3.msi'
+$checksum32='08F4EA2F6A195E7EBB3E4F8CB4380E9BCEAACDF48E7E472B3E0197586B4D3C27'
  
 $ErrorActionPreference = 'Stop'
  
