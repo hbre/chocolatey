@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - '.github/workflows/*'
+  schedule:
+  - cron: 30 14 * * 1-5
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '2.2.204' # SDK Version to use.
+        
+    - name: SetUp Git
+      run: |
+        git switch -c ${{ github.ref }}
+        git remote add github "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+        git pull github ${{ github.ref }} --ff-only
+        git config user.email "hbre@users.noreply.github.com"
+        git config user.name "GitHub Action Auto Update"
+        
+    - name: SetUp Chocolatey
+      run: choco apikey --key ${{ secrets.CHOCO_API_KEY }} --source https://push.chocolatey.org/
+      
+    - name:     
+      run: dotnet run --project updater/updater.csproj
+      
+    - name: Commit and Push
+      run: |
+        git commit -m "Package Update"
+        git push github HEAD:${{ github.ref }}
