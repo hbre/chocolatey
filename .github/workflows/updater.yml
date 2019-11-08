@@ -47,5 +47,5 @@ jobs:
       
     - name: Commit and Push
       run: |
-        git commit -m "Package Update"
+        git commit -m "chocolatey Package Update"
         git push github HEAD:${{ github.ref }}
