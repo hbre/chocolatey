@@ -42,10 +42,16 @@ jobs:
     - name: SetUp Chocolatey
       run: choco apikey --key ${{ secrets.CHOCO_API_KEY }} --source https://push.chocolatey.org/
       
-    - name:     
+    - name: Run Updater
       run: dotnet run --project updater/updater.csproj
-      
+
+    - name: Commit (1)
+      run: git commit -m "chocolatey Package Update (1)"
+
+    - name: Re-Run Updater
+      run: dotnet run --project updater/updater.csproj      
+
     - name: Commit and Push
       run: |
-        git commit -m "chocolatey Package Update"
+        git commit -m "chocolatey Package Update (2 - Retry)"
         git push github HEAD:${{ github.ref }}
