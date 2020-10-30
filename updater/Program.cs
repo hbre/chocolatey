@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Serilog;
 using Nuke.Common;
 using Nuke.Common.Tooling;
 
@@ -16,13 +17,13 @@ namespace updater
     {
         private static void Main(string[] args)
         {
-            Logger.Info("NCrunch-Updater");
-
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
 
             var workingDir = GetGitBase(Environment.CurrentDirectory);
 
-            Logger.Trace("Working in {0}", workingDir);
-
+            Log.Debug("Working in {0}", workingDir);
 
             using (var client = new CachedClient())
             {
@@ -31,7 +32,7 @@ namespace updater
 
                 var webSiteContent = client.CachedDownloadString(ncrunchSite);
                 var majorVersion = GetLatestVersion(webSiteContent);
-                Logger.Info("Aktuelle Version: " + majorVersion);
+                Log.Information("Aktuelle Version: " + majorVersion);
 
                 var vsVersions = new List<NCrunchProgram>
                 {
@@ -59,9 +60,9 @@ namespace updater
                 };
                 foreach (var vsVersion in vsVersions)
                 {
-                    Logger.Block(vsVersion.ChocolateyPackageName);
+                    Log.Information(vsVersion.ChocolateyPackageName);
 
-                    Logger.Info("Processing " + vsVersion.ChocolateyPackageName + "/" + vsVersion.Name + "...");
+                    Log.Information("Processing " + vsVersion.ChocolateyPackageName + "/" + vsVersion.Name + "...");
                     Uri downloadLink = null;
 
                     if (majorVersion != null)
@@ -73,11 +74,11 @@ namespace updater
 
                     if (downloadLink == null)
                     {
-                        Logger.Error("Fehler: Downloadlink null");
+                        Log.Error("Fehler: Downloadlink null");
                         continue;
                     }
 
-                    Logger.Info("Checking / Downloading ... " + downloadLink);
+                    Log.Information("Checking / Downloading ... " + downloadLink);
 
                     var re = new Regex("(NCrunch.*msi)$");
                     var match = re.Match(downloadLink.LocalPath);
@@ -92,22 +93,22 @@ namespace updater
 
                     if (sha256 == null)
                     {
-                        Logger.Error("Error: Kann SHA256 nicht erkennen. ");
+                        Log.Error("Error: Kann SHA256 nicht erkennen. ");
                         continue;
                     }
-                    Logger.Trace("SHA256: " + sha256);
+                    Log.Verbose("SHA256: " + sha256);
 
                     var nuspecPath = WritePackage(vsVersion, downloadLink, sha256, workingDir);
                     if (nuspecPath.nuspec == null)
                     {
-                        Logger.Success("WritePackage hat keine neue Datei gebracht, d.h. kein Update nötig.");
+                        Log.Information("WritePackage hat keine neue Datei gebracht, d.h. kein Update nötig.");
                         continue;
                     }
 
                     var nupkgPath = PackPackage(nuspecPath.nuspec);
                     if (nupkgPath == null)
                     {
-                        Logger.Error("PackPackage hat kein Ergebnis gebracht.");
+                        Log.Error("PackPackage hat kein Ergebnis gebracht.");
                         continue;
                     }
 
