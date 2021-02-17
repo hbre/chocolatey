@@ -290,11 +290,11 @@ Install-ChocolateyPackage @packageArgs
 
         public static string GetLatestVersion(string homepageContent)
         {
-            var pattern = "latest version (\\d.\\d+) \\(";
+            var match2 = new Regex(@"\<span id\=""DownloadVersionText""\>v(\d.\d+) Released").Match(homepageContent);
+            if (match2.Success)
+                return match2.Groups[1].Value;
 
-            var re = new Regex(pattern);
-            var match = re.Match(homepageContent);
-
+            var match = new Regex(@"latest version (\d.\d+) \(").Match(homepageContent);
             if (match.Success)
                 return match.Groups[1].Value;
 
