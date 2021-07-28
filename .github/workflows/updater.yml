@@ -1,6 +1,7 @@
-name: CI
+name: RunUpdater
 
 on:
+  workflow_dispatch:
   push:
     branches:
     - master
@@ -46,12 +47,12 @@ jobs:
       run: dotnet run --project updater/updater.csproj
 
     - name: Commit (1)
-      run: git commit -m "chocolatey Package Update (1)"
+      run: git commit -m "chocolatey Package Update (1)" || true
 
     - name: Re-Run Updater
       run: dotnet run --project updater/updater.csproj      
 
     - name: Commit and Push
       run: |
-        git commit -m "chocolatey Package Update (2 - Retry)"
+        git commit -m "chocolatey Package Update (2 - Retry)" || true
         git push github HEAD:${{ github.ref }}
