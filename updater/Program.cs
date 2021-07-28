@@ -55,8 +55,7 @@ namespace updater
                     NCrunchProgram.CreateVsProgram(2015),
                     NCrunchProgram.CreateVsProgram(2013),
                     NCrunchProgram.CreateVsProgram(2012),
-                    NCrunchProgram.CreateVsProgram(2010),
-                    NCrunchProgram.CreateVsProgram(2008)
+                    NCrunchProgram.CreateVsProgram(2010)
                 };
                 foreach (var vsVersion in vsVersions)
                 {
