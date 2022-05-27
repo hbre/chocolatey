@@ -1,0 +1,58 @@
+name: RunUpdater
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - master
+    paths:
+    - '.github/workflows/*'
+  schedule:
+  - cron: 30 10 * * 1-5
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@master
+      with:
+       ref: master
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.103' # SDK Version to use.
+        
+    - name: SetUp Git switch
+      run: |
+        git switch -c ${{ github.ref }}
+        
+    - name: SetUp Git remote add
+      run: |
+        git remote add github "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+
+    - name: SetUp Git pull
+      run: |
+        git pull github ${{ github.ref }} --ff-only
+
+    - name: SetUp Git User
+      run: |
+        git config user.email "hbre@users.noreply.github.com"
+        git config user.name "GitHub Action Auto Update"
+        
+    - name: SetUp Chocolatey
+      run: choco apikey --key ${{ secrets.CHOCO_API_KEY }} --source https://push.chocolatey.org/
+      
+    - name: Run Updater
+      run: dotnet run --project updater/updater.csproj
+
+    - name: Commit (1)
+      run: git commit -m "chocolatey Package Update (1)" || true
+
+    - name: Re-Run Updater
+      run: dotnet run --project updater/updater.csproj      
+
+    - name: Commit and Push
+      run: |
+        git commit -m "chocolatey Package Update (2 - Retry)" || true
+        git push github HEAD:${{ github.ref }}
