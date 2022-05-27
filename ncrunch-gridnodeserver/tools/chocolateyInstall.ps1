@@ -1,8 +1,8 @@
 ﻿$ErrorActionPreference = 'Stop'
 
 $packageName='ncrunch-gridnodeserver'
-$url32='http://downloads.ncrunch.net/NCrunch_GridNodeServer_4.11.0.2.msi'
-$checksum32='10844799F91D06C2BC62F47A20AB1373308C030D7A2E1B740DF0D955AEF60414'
+$url32='http://downloads.ncrunch.net/NCrunch_GridNodeServer_4.13.0.1.msi'
+$checksum32='C15A62025EBE19BC5995DBB5C3EE65FE636287F87D08594EC03267160CF78532'
  
 $ErrorActionPreference = 'Stop'
  
