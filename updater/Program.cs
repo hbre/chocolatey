@@ -138,7 +138,7 @@ namespace updater
                 var match = regEx.Match(line.Text);
                 if (match.Success)
                 {
-                    Logger.Trace("Text: {0}, Result{1}", line.Text, match.Groups[1].Value);
+                    Log.Verbose("Text: {0}, Result{1}", line.Text, match.Groups[1].Value);
                     return match.Groups[1].Value;
                 }
             }
@@ -147,9 +147,9 @@ namespace updater
 
         private static int PushPackage(string nupkgPath)
         {
-            Logger.Info("Pushing {0}", nupkgPath);
+            Log.Information("Pushing {0}", nupkgPath);
             var pt = ProcessTasks.StartProcess("choco", $"push {nupkgPath}").AssertWaitForExit();
-            Logger.Success("Pushed: {0}", pt.ExitCode);
+            Log.Information("Pushed: {0}", pt.ExitCode);
 
             return pt.ExitCode;
         }
@@ -164,7 +164,7 @@ namespace updater
             {
                 if (line.Text.Contains(filename))
                 {
-                    Logger.Info("nuspec changed: {0}", line.Text);
+                    Log.Information("nuspec changed: {0}", line.Text);
                     return true;
                 }
             }
@@ -189,7 +189,7 @@ namespace updater
 
         public static (string nuspec, string ps) WritePackage(NCrunchProgram ncp, Uri downloadLink, string sha256, string workingDir)
         {
-            Logger.Trace("Write Package ... {0}", ncp.ChocolateyPackageName);
+            Log.Verbose("Write Package ... {0}", ncp.ChocolateyPackageName);
 
             var dir = Path.Combine(workingDir, ncp.ChocolateyPackageName);
             var toolsDir = Path.Combine(dir, "tools");
@@ -201,7 +201,7 @@ namespace updater
             var match = regex.Match(downloadLink.LocalPath);
             var detailVersion = match.Groups[1] + "." + match.Groups[2] + "." + match.Groups[3];
 
-            Logger.Success("WritePackage: Detected Version {0} for {1}", detailVersion, ncp.ChocolateyPackageName);
+            Log.Information("WritePackage: Detected Version {0} for {1}", detailVersion, ncp.ChocolateyPackageName);
 
             var nuspecPath = Path.Combine(dir, ncp.ChocolateyPackageName + ".nuspec");
 

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Web;
-using Nuke.Common;
+using Serilog;
 
 namespace updater
 {
@@ -25,17 +25,17 @@ namespace updater
         {
             wc.Headers.Add("Referer", ncrunchSite);
 
-            Logger.Trace("Added Referer: " + wc.Headers["Referer"]);
+            Log.Verbose("Added Referer: " + wc.Headers["Referer"]);
 
             var tmpDir = Path.GetTempPath();
             var tmpFile = Path.Combine(tmpDir, HttpUtility.UrlEncode(ncrunchSite));
 
-            Logger.Trace("TempFile for {0} is {1}", ncrunchSite, tmpFile);
+            Log.Verbose("TempFile for {0} is {1}", ncrunchSite, tmpFile);
 
             // 11:12 < 11:15-1 
             if (!File.Exists(tmpFile) || File.GetLastWriteTimeUtc(tmpFile) < DateTime.UtcNow.AddHours(-1))
             {
-                Logger.Info("Re-Download {0}", ncrunchSite);
+                Log.Information("Re-Download {0}", ncrunchSite);
                 var content = wc.DownloadString(ncrunchSite);
                 File.WriteAllText(tmpFile, content);
             }
@@ -51,12 +51,12 @@ namespace updater
 
             if (!File.Exists(targetPath))
             {
-                Logger.Trace("Downloading from {0} --> {1}", downloadLink, targetPath);
+                Log.Verbose("Downloading from {0} --> {1}", downloadLink, targetPath);
                 wc.DownloadFile(downloadLink, targetPath);
             }
             else
             {
-                Logger.Trace("Using cached Download from {0}", targetPath);
+                Log.Verbose("Using cached Download from {0}", targetPath);
             }
         }
     }
