@@ -16,7 +16,6 @@ namespace updater
                 Name = $"{version}",
                 DownloadName = $"VS{version}",
                 MarketingName = $"NCrunch for Visual Studio {version}"
-
             };
         }
     }

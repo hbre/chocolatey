@@ -8,7 +8,6 @@ namespace updater
 {
     public class CachedClient : IDisposable
     {
-
         private readonly WebClient wc;
 
         public CachedClient()
@@ -32,8 +31,11 @@ namespace updater
 
             Log.Verbose("TempFile for {0} is {1}", ncrunchSite, tmpFile);
 
-            // 11:12 < 11:15-1 
-            if (!File.Exists(tmpFile) || File.GetLastWriteTimeUtc(tmpFile) < DateTime.UtcNow.AddHours(-1))
+            // 11:12 < 11:15-1
+            if (
+                !File.Exists(tmpFile)
+                || File.GetLastWriteTimeUtc(tmpFile) < DateTime.UtcNow.AddHours(-1)
+            )
             {
                 Log.Information("Re-Download {0}", ncrunchSite);
                 var content = wc.DownloadString(ncrunchSite);

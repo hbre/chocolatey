@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-static internal class FileHelper
+internal static class FileHelper
 {
     public static string GetChecksum(string file)
     {

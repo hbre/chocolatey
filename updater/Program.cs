@@ -12,14 +12,11 @@ using Nuke.Common.Tooling;
 
 namespace updater
 {
-
     public class Program
     {
         private static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .CreateLogger();
+            Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
             var workingDir = GetGitBase(Environment.CurrentDirectory);
 
@@ -27,7 +24,6 @@ namespace updater
 
             using (var client = new CachedClient())
             {
-
                 var ncrunchSite = "https://www.ncrunch.net";
 
                 var webSiteContent = client.CachedDownloadString(ncrunchSite);
@@ -62,12 +58,23 @@ namespace updater
                 {
                     Log.Information(vsVersion.ChocolateyPackageName);
 
-                    Log.Information("Processing " + vsVersion.ChocolateyPackageName + "/" + vsVersion.Name + "...");
+                    Log.Information(
+                        "Processing "
+                            + vsVersion.ChocolateyPackageName
+                            + "/"
+                            + vsVersion.Name
+                            + "..."
+                    );
                     Uri downloadLink = null;
 
                     if (majorVersion != null)
                     {
-                        var url = ncrunchSite + "/download/getMsi?version=" + majorVersion + "&vs=" + vsVersion.Name;
+                        var url =
+                            ncrunchSite
+                            + "/download/getMsi?version="
+                            + majorVersion
+                            + "&vs="
+                            + vsVersion.Name;
                         webSiteContent = client.CachedDownloadString(url);
                         downloadLink = GetDownloadLink(webSiteContent, vsVersion.DownloadName);
                     }
@@ -90,7 +97,6 @@ namespace updater
 
                     string sha256 = FileHelper.GetChecksum(targetPath);
 
-
                     if (sha256 == null)
                     {
                         Log.Error("Error: Kann SHA256 nicht erkennen. ");
@@ -101,7 +107,9 @@ namespace updater
                     var nuspecPath = WritePackage(vsVersion, downloadLink, sha256, workingDir);
                     if (nuspecPath.nuspec == null)
                     {
-                        Log.Information("WritePackage hat keine neue Datei gebracht, d.h. kein Update nötig.");
+                        Log.Information(
+                            "WritePackage hat keine neue Datei gebracht, d.h. kein Update nötig."
+                        );
                         continue;
                     }
 
@@ -115,11 +123,14 @@ namespace updater
                     var result = PushPackage(nupkgPath);
                     if (result == 0)
                     {
-                        var pt1 = ProcessTasks.StartProcess("git", $"add {nuspecPath.nuspec}").AssertWaitForExit();
-                        var pt2 = ProcessTasks.StartProcess("git", $"add {nuspecPath.ps}").AssertWaitForExit();
+                        var pt1 = ProcessTasks
+                            .StartProcess("git", $"add {nuspecPath.nuspec}")
+                            .AssertWaitForExit();
+                        var pt2 = ProcessTasks
+                            .StartProcess("git", $"add {nuspecPath.ps}")
+                            .AssertWaitForExit();
                     }
                 }
-
             }
         }
 
@@ -134,7 +145,6 @@ namespace updater
             var regEx = new Regex("Successfully created package '(.*)'");
             foreach (var line in proc.Output)
             {
-
                 var match = regEx.Match(line.Text);
                 if (match.Success)
                 {
@@ -148,15 +158,30 @@ namespace updater
         private static int PushPackage(string nupkgPath)
         {
             Log.Information("Pushing {0}", nupkgPath);
-            var pt = ProcessTasks.StartProcess("choco", $"push {nupkgPath}").AssertWaitForExit();
-            Log.Information("Pushed: {0}", pt.ExitCode);
+            var pt = ProcessTasks
+                .StartProcess(
+                    "choco",
+                    $"push {nupkgPath} --source=\"'https://push.chocolatey.org/'\""
+                )
+                .AssertWaitForExit();
+
+            foreach (var o in pt.Output)
+            {
+                if (o.Type == OutputType.Std)
+                    Log.Information(o.Text);
+                else
+                    Log.Error(o.Text);
+            }
+            Log.Information("Pushed: {0} {@1}", pt.ExitCode, pt.Output);
 
             return pt.ExitCode;
         }
 
         private static bool GitChanged(string nuspecPath)
         {
-            var result = ProcessTasks.StartProcess("git", $"status {nuspecPath}").AssertWaitForExit();
+            var result = ProcessTasks
+                .StartProcess("git", $"status {nuspecPath}")
+                .AssertWaitForExit();
 
             var filename = Path.GetFileName(nuspecPath);
 
@@ -187,7 +212,12 @@ namespace updater
             return Path.Combine("/", "Users", "henning", "dev", "chocolatey");
         }
 
-        public static (string nuspec, string ps) WritePackage(NCrunchProgram ncp, Uri downloadLink, string sha256, string workingDir)
+        public static (string nuspec, string ps) WritePackage(
+            NCrunchProgram ncp,
+            Uri downloadLink,
+            string sha256,
+            string workingDir
+        )
         {
             Log.Verbose("Write Package ... {0}", ncp.ChocolateyPackageName);
 
@@ -201,17 +231,23 @@ namespace updater
             var match = regex.Match(downloadLink.LocalPath);
             var detailVersion = match.Groups[1] + "." + match.Groups[2] + "." + match.Groups[3];
 
-            Log.Information("WritePackage: Detected Version {0} for {1}", detailVersion, ncp.ChocolateyPackageName);
+            Log.Information(
+                "WritePackage: Detected Version {0} for {1}",
+                detailVersion,
+                ncp.ChocolateyPackageName
+            );
 
             var nuspecPath = Path.Combine(dir, ncp.ChocolateyPackageName + ".nuspec");
 
-            File.WriteAllText(nuspecPath,
-                GetNuspecContent(ncp, detailVersion), Encoding.UTF8);
+            File.WriteAllText(nuspecPath, GetNuspecContent(ncp, detailVersion), Encoding.UTF8);
 
             var psPath = Path.Combine(toolsDir, "chocolateyInstall.ps1");
 
-            File.WriteAllText(psPath,
-                GetChocolateyInstall(ncp, downloadLink, sha256), Encoding.UTF8);
+            File.WriteAllText(
+                psPath,
+                GetChocolateyInstall(ncp, downloadLink, sha256),
+                Encoding.UTF8
+            );
 
             if (GitChanged(nuspecPath) || GitChanged(psPath))
                 return (nuspecPath, psPath);
@@ -219,7 +255,11 @@ namespace updater
             return (null, null);
         }
 
-        private static string GetChocolateyInstall(NCrunchProgram ncp, Uri downloadLink, string sha256)
+        private static string GetChocolateyInstall(
+            NCrunchProgram ncp,
+            Uri downloadLink,
+            string sha256
+        )
         {
             return $@"$ErrorActionPreference = 'Stop'
 
@@ -290,7 +330,9 @@ Install-ChocolateyPackage @packageArgs
 
         public static string GetLatestVersion(string homepageContent)
         {
-            var match2 = new Regex(@"\<span id\=""DownloadVersionText""\>v(\d.\d+) Released").Match(homepageContent);
+            var match2 = new Regex(@"\<span id\=""DownloadVersionText""\>v(\d.\d+) Released").Match(
+                homepageContent
+            );
             if (match2.Success)
                 return match2.Groups[1].Value;
 
@@ -308,8 +350,10 @@ Install-ChocolateyPackage @packageArgs
             //              @"_(\d+).(\d+).\d+.(\d+).msi";
 
             // Pattern for Direct Download from Vendor Site
-            var pattern = @"http:\/\/downloads.ncrunch.net/NCrunch_" + vsNameDownloadPage +
-                          @"_(\d+).(\d+).\d+.(\d+).msi";
+            var pattern =
+                @"http:\/\/downloads.ncrunch.net/NCrunch_"
+                + vsNameDownloadPage
+                + @"_(\d+).(\d+).\d+.(\d+).msi";
 
             var re = new Regex(pattern);
             var match = re.Match(homepageContent);
@@ -317,11 +361,11 @@ Install-ChocolateyPackage @packageArgs
             if (match.Success)
                 return new Uri(match.ToString());
 
-            Logger.Error("Cant find download-link for " + vsNameDownloadPage + " in " + homepageContent);
+            Logger.Error(
+                "Cant find download-link for " + vsNameDownloadPage + " in " + homepageContent
+            );
 
             return null;
         }
-
-
     }
 }
