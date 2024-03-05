@@ -21,7 +21,7 @@ jobs:
        ref: master
     - uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0' # SDK Version to use.
+        dotnet-version: '8.0' # SDK Version to use.
         
     - name: SetUp Git switch
       run: |
