@@ -346,14 +346,14 @@ Install-ChocolateyPackage @packageArgs
         public static Uri GetDownloadLink(string homepageContent, string vsNameDownloadPage)
         {
             // Pattern for S3 Download
-            // var pattern = @"https:\/\/s3.amazonaws.com\/downloads.ncrunch.net\/NCrunch_" + vsNameDownloadPage +
-            //              @"_(\d+).(\d+).\d+.(\d+).msi";
+            var pattern = @"https:\/\/s3.amazonaws.com\/downloads.ncrunch.net\/NCrunch_" + vsNameDownloadPage +
+                          @"_(\d+).(\d+).\d+.(\d+).msi";
 
             // Pattern for Direct Download from Vendor Site
-            var pattern =
-                @"http:\/\/downloads.ncrunch.net/NCrunch_"
-                + vsNameDownloadPage
-                + @"_(\d+).(\d+).\d+.(\d+).msi";
+            // var pattern =
+            //     @"http:\/\/downloads.ncrunch.net/NCrunch_"
+            //     + vsNameDownloadPage
+            //     + @"_(\d+).(\d+).\d+.(\d+).msi";
 
             var re = new Regex(pattern);
             var match = re.Match(homepageContent);
