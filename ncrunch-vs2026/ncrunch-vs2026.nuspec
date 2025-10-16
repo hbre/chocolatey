@@ -10,7 +10,7 @@
     <copyright>NCrunch</copyright>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <releaseNotes>http://www.ncrunch.net/documentation/overview</releaseNotes>
-    <id>ncrunch-vs2022</id>
+    <id>ncrunch-vs2026</id>
     <packageSourceUrl>https://github.com/hbre/chocolatey</packageSourceUrl>
     <owners>Henning Bredenkötter</owners>
     <title>NCrunch for Visual Studio 2022</title>
